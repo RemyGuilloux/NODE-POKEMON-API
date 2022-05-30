@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: {
+          msg: 'Le nom est déjà pris.'
+        },
         validate: {
           notEmpty: {msg: `Le nom du pokemon ne peut pas être un espace vide`},
           notNull: { msg: `le nom est une propriété requise`}
