@@ -1,3 +1,5 @@
+const validTypes = ['Plante', 'Poison', 'Feu', 'Eau', 'Insecte', 'Vol', 'Normal', 'Electrik', 'Fée']
+
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Pokemon', {
       id: {
@@ -18,6 +20,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           isInt: { msg: `Utilisez uniquement des nombres entiers pour les points de vies`},
+          min: {
+            args: [0],
+            msg: `Les points de vie doivent être supérieurs ou égales à 0.`
+          },
+          max: {
+            args: [999],
+            msg: `Les points de vie doivent être inférieurs ou égales à 999.`
+          },
           notNull: { msg: `Les points de vie sont une propriété requise.`}
         }
       },
@@ -26,6 +36,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           isInt: { msg: `Utilisez uniquement des nombres entiers pour les dégats`},
+          min: {
+            args: [0],
+            msg: `Les points de dégats doivent être supérieurs ou égales à 0.`
+          },
+          max: {
+            args: [99],
+            msg: `Les points de dégats doivent être inférieurs ou égales à 99.`
+          },
           notNull: { msg: `Les dégats ne peuvent pas être null.`}
         }
       },
@@ -45,6 +63,21 @@ module.exports = (sequelize, DataTypes) => {
         },
         set(types){
           this.setDataValue('types', types.join())
+        },
+        validate: {
+          isTypesValid(value) {
+            if(!value){
+              throw new Error('Un pokémon doit au moins avoir un type.')
+            }
+            if(value.split(',').length > 3){
+              throw new Error('Un pokémon ne peux pas avoir plus de trois types.')
+            }
+            value.split(',').forEach(type => {
+              if(!validTypes.includes(type)){
+                throw new Error(`Le type d'un pokemon doit appartenir à la liste suivante: ${validTypes}`)
+              }
+            })
+          }
         }
       }
     }, {
